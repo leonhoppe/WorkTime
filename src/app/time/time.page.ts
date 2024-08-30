@@ -57,23 +57,45 @@ export class TimePage {
     return this.data.filter(entry => entry.registeredAt.getDay() === today);
   }
 
+  public getTypeText(type: TimeType): string {
+    switch (type) {
+      case "login":
+        return "Eingestempelt";
+
+      case "logout":
+        return "Ausgestempelt";
+
+      case "start-drive":
+        return "Dienstreise gestartet";
+
+      case "end-drive":
+        return "Dienstreise beendet";
+    }
+  }
+
   public generateSeparatorText(entry1: TimeEntry, entry2: TimeEntry): string {
     const difference = +entry2.registeredAt.getTime() - +entry1.registeredAt.getTime() - 3600000;
     const date = new Date(difference);
-    const text = entry1.type === 'login' ? "Arbeit " : "Pause ";
+
+    let text = entry1.type === 'login' ? "Arbeit " : "Pause ";
+    if (entry1.type === 'start-drive' && entry2.type === 'end-drive') {
+      text = "Dienstreise";
+    }
+
     return text + `(${date.toLocaleTimeString()})`;
   }
 
   public addEntry(): void {
+    const animateIndex = this.shouldAnimate.length;
     this.shouldAnimate.push(true)
-    setTimeout(() => this.shouldAnimate[this.shouldAnimate.length - 1] = false, 5000);
+    setTimeout(() => this.shouldAnimate[animateIndex] = false, 2000);
 
     this.data.push({
       registeredAt: new Date(Date.now()),
       type: this.currentAction
     });
     this.saveData();
-    this.currentAction = this.currentAction === 'login' ? 'logout' : 'login';
+    this.updateCurrentAction();
   }
 
   public removeEntry(index: number): void {

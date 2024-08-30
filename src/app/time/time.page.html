@@ -6,7 +6,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" [scrollY]="false">
+<ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Zeiterfassung</ion-title>
@@ -27,7 +27,7 @@
   <section class="time-entries">
     <ion-item class="entry" *ngFor="let entry of getEntriesOfToday(); let index = index" (click)="removeEntry(index)" [ngClass]="{'animate': shouldAnimate[index]}">
       <div class="circle"></div>
-      <ion-label class="type">{{entry.type === 'login' ? "Eingestempelt" : "Ausgestempelt"}}</ion-label>
+      <ion-label class="type">{{getTypeText(entry.type)}}</ion-label>
       <span class="time">{{entry.registeredAt.toLocaleTimeString()}}</span>
       <span *ngIf="index !== 0" class="between">
         <span class="between-content">{{generateSeparatorText(data[index - 1], entry)}}</span>
@@ -37,7 +37,7 @@
 
   <div class="button-container">
     <ion-button (click)="addEntry()">{{currentAction === 'login' ? "Einstempeln" : "Ausstempeln"}}</ion-button>
-    <ion-button shape="round" id="open-modal">
+    <ion-button shape="round" id="open-modal" class="icon-button">
       <ion-icon slot="icon-only" name="add"></ion-icon>
     </ion-button>
   </div>
@@ -70,6 +70,8 @@
           <ion-select label="Stempeltyp" value="login" [(ngModel)]="modalMode">
             <ion-select-option value="login">Einstempeln</ion-select-option>
             <ion-select-option value="logout">Ausstempeln</ion-select-option>
+            <ion-select-option value="start-drive">Dienstreise starten</ion-select-option>
+            <ion-select-option value="end-drive">Dienstreise beenden</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-content>

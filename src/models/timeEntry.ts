@@ -3,4 +3,4 @@ export interface TimeEntry {
   type: TimeType;
 }
 
-export type TimeType = 'login' | 'logout';
+export type TimeType = 'login' | 'logout' | 'start-drive' | 'end-drive';

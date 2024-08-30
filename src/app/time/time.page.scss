@@ -1,6 +1,6 @@
 .button-container {
-  position: absolute;
-  bottom: 75px;
+  position: fixed;
+  bottom: 25px;
   left: 0;
   right: 0;
   display: flex;
@@ -13,6 +13,7 @@
   flex-direction: column;
   gap: 65px;
   margin: 20px;
+  padding-bottom: 75px;
 
   .entry {
     --inner-border-width: 0 0 0 0;
