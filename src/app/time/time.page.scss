@@ -1,0 +1,121 @@
+.button-container {
+  position: absolute;
+  bottom: 75px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.time-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 65px;
+  margin: 20px;
+
+  .entry {
+    --inner-border-width: 0 0 0 0;
+    position: relative;
+    overflow: visible;
+    line-height: 15px;
+    z-index: 0;
+
+    &.animate {
+      opacity: 0;
+      animation: fade-in 200ms ease-in-out forwards;
+
+      .between::before {
+        transform: scaleX(0);
+        animation: line-in-horizontal 200ms ease-in-out 1000ms forwards;
+      }
+
+      .between-content {
+        opacity: 0;
+        animation: fade-in 500ms ease-in-out 1200ms forwards;
+      }
+
+      .circle::after {
+        transform: scaleY(0);
+        animation: line-in 500ms ease-in-out 500ms forwards;
+      }
+    }
+
+    .between {
+      position: absolute;
+      overflow: visible;
+      left: 45px;
+      bottom: calc(100% + 25px);
+
+      &::before {
+        content: '';
+        position: absolute;
+        height: 2px;
+        width: 20px;
+        background-color: var(--color);
+        top: calc(50% - 1px);
+        left: -37px;
+      }
+    }
+
+    .type {
+      padding-left: 15px;
+    }
+
+    .circle {
+      background-color: var(--color);
+      border-radius: 50%;
+      width: 15px;
+      height: 15px;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        background-color: var(--color);
+        width: 2px;
+        height: 100px;
+        bottom: 100%;
+        left: calc(50% - 1px);
+      }
+    }
+
+    &:first-of-type .circle::after {
+      display: none;
+    }
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes line-in {
+  0% {
+    transform-origin: top;
+    transform: scaleY(0);
+  }
+
+  100% {
+    transform-origin: top;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes line-in-horizontal {
+  0% {
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  100% {
+    transform-origin: left;
+    transform: scaleX(1);
+  }
+}

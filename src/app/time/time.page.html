@@ -1,0 +1,78 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Zeiterfassung
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Zeiterfassung</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-item>
+    <ion-label>Tag</ion-label>
+    <ion-datetime-button datetime="current-datetime"></ion-datetime-button>
+
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime id="current-datetime" presentation="date" [(ngModel)]="currentDate"></ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </ion-item>
+
+  <section class="time-entries">
+    <ion-item class="entry" *ngFor="let entry of getEntriesOfToday(); let index = index" (click)="removeEntry(index)" [ngClass]="{'animate': shouldAnimate[index]}">
+      <div class="circle"></div>
+      <ion-label class="type">{{entry.type === 'login' ? "Eingestempelt" : "Ausgestempelt"}}</ion-label>
+      <span class="time">{{entry.registeredAt.toLocaleTimeString()}}</span>
+      <span *ngIf="index !== 0" class="between">
+        <span class="between-content">{{generateSeparatorText(data[index - 1], entry)}}</span>
+      </span>
+    </ion-item>
+  </section>
+
+  <div class="button-container">
+    <ion-button (click)="addEntry()">{{currentAction === 'login' ? "Einstempeln" : "Ausstempeln"}}</ion-button>
+    <ion-button shape="round" id="open-modal">
+      <ion-icon slot="icon-only" name="add"></ion-icon>
+    </ion-button>
+  </div>
+
+  <ion-modal trigger="open-modal" (willDismiss)="modal?.dismiss(null, 'cancel')" #createModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="modal?.dismiss(null, 'cancel')">Cancel</ion-button>
+          </ion-buttons>
+          <ion-title>Welcome</ion-title>
+          <ion-buttons slot="end">
+            <ion-button [strong]="true" (click)="addModalEntry()">Confirm</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-label>Uhrzeit</ion-label>
+          <ion-datetime-button datetime="datetime"></ion-datetime-button>
+
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime id="datetime" presentation="time" [(ngModel)]="modalDate"></ion-datetime>
+            </ng-template>
+          </ion-modal>
+        </ion-item>
+        <ion-item>
+          <ion-select label="Stempeltyp" value="login" [(ngModel)]="modalMode">
+            <ion-select-option value="login">Einstempeln</ion-select-option>
+            <ion-select-option value="logout">Ausstempeln</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
