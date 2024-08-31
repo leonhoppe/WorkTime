@@ -53,8 +53,8 @@ export class TimePage {
   }
 
   public getEntriesOfToday(): TimeEntry[] {
-    const today = new Date(this.currentDate || Date.now()).getDay();
-    return this.data.filter(entry => entry.registeredAt.getDay() === today);
+    const today = new Date(this.currentDate || Date.now()).toLocaleDateString();
+    return this.data.filter(entry => entry.registeredAt.toLocaleDateString() === today);
   }
 
   public getTypeText(type: TimeType): string {
@@ -117,6 +117,10 @@ export class TimePage {
     localStorage.setItem("time-data", JSON.stringify(this.data));
   }
 
+  public openModal(): void {
+    this.modal?.present();
+  }
+
   public addModalEntry(): void {
     const date = new Date(this.modalDate);
     date.setSeconds(0);
@@ -137,4 +141,10 @@ export class TimePage {
     this.saveData();
     this.modal?.dismiss(null, 'submit');
   }
+
+  public isToday(): boolean {
+    return new Date(this.currentDate || Date.now()).toLocaleDateString() === new Date(Date.now()).toLocaleDateString();
+  }
+
+  protected readonly open = open;
 }

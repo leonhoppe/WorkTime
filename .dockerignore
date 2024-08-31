@@ -1,0 +1,17 @@
+# Ignore the node_modules directory
+node_modules
+
+# Ignore the dist directory
+www
+
+# Ignore the .git directory
+.git
+
+# Ignore the .gitignore file
+.gitignore
+
+# Ignore the .dockerignore file
+.dockerignore
+Dockerfile
+
+.vscode/*

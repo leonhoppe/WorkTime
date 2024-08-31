@@ -35,23 +35,23 @@
     </ion-item>
   </section>
 
-  <div class="button-container">
+  <div class="button-container" *ngIf="isToday()">
     <ion-button (click)="addEntry()">{{currentAction === 'login' ? "Einstempeln" : "Ausstempeln"}}</ion-button>
-    <ion-button shape="round" id="open-modal" class="icon-button">
+    <ion-button shape="round" class="icon-button" (click)="openModal()">
       <ion-icon slot="icon-only" name="add"></ion-icon>
     </ion-button>
   </div>
 
-  <ion-modal trigger="open-modal" (willDismiss)="modal?.dismiss(null, 'cancel')" #createModal>
+  <ion-modal (willDismiss)="modal?.dismiss(null, 'cancel')" #createModal>
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-buttons slot="start">
-            <ion-button (click)="modal?.dismiss(null, 'cancel')">Cancel</ion-button>
+            <ion-button (click)="modal?.dismiss(null, 'cancel')">Abbrechen</ion-button>
           </ion-buttons>
           <ion-title>Welcome</ion-title>
           <ion-buttons slot="end">
-            <ion-button [strong]="true" (click)="addModalEntry()">Confirm</ion-button>
+            <ion-button [strong]="true" (click)="addModalEntry()">Speichern</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
@@ -67,7 +67,7 @@
           </ion-modal>
         </ion-item>
         <ion-item>
-          <ion-select label="Stempeltyp" value="login" [(ngModel)]="modalMode">
+          <ion-select label="Stempeltyp" value="login" cancel-text="Abbrechen" [(ngModel)]="modalMode">
             <ion-select-option value="login">Einstempeln</ion-select-option>
             <ion-select-option value="logout">Ausstempeln</ion-select-option>
             <ion-select-option value="start-drive">Dienstreise starten</ion-select-option>
