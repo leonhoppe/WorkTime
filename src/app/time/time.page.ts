@@ -30,7 +30,6 @@ export class TimePage {
   @ViewChild('createModal') modal: IonModal | undefined;
 
   public modalDate: any;
-  public modalMode: TimeType = 'login';
   public currentDate: any;
 
   constructor() {
@@ -127,7 +126,7 @@ export class TimePage {
 
     this.data.push({
       registeredAt: date,
-      type: this.modalMode
+      type: this.currentAction
     });
     this.data.sort((a: TimeEntry, b: TimeEntry) => {
       return a.registeredAt.getTime() - b.registeredAt.getTime();
@@ -138,8 +137,10 @@ export class TimePage {
       this.shouldAnimate.push(false);
     }
 
+    this.updateCurrentAction();
     this.saveData();
     this.modal?.dismiss(null, 'submit');
+    this.modalDate = undefined;
   }
 
   public isToday(): boolean {
