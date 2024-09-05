@@ -73,15 +73,29 @@ export class TimePage {
   }
 
   public generateSeparatorText(entry1: TimeEntry, entry2: TimeEntry): string {
-    const difference = +entry2.registeredAt.getTime() - +entry1.registeredAt.getTime() - 3600000;
-    const date = new Date(difference);
-
     let text = entry1.type === 'login' ? "Arbeit " : "Pause ";
     if (entry1.type === 'start-drive' && entry2.type === 'end-drive') {
       text = "Dienstreise";
     }
 
-    return text + `(${date.toLocaleTimeString()})`;
+    return text + `(${this.calculateTimespan(entry1.registeredAt, entry2.registeredAt)})`;
+  }
+
+  private calculateTimespan(start: Date, end: Date): string {
+    const startSeconds: number = (start.getHours() * 3600) + (start.getMinutes() * 60) + start.getSeconds();
+    const endSeconds: number = (end.getHours() * 3600) + (end.getMinutes() * 60) + end.getSeconds();
+
+    const difference = endSeconds - startSeconds;
+    const diffHours = Math.floor(difference / 3600.00);
+    const diffMinutes = Math.floor((difference % 3600) / 60.00);
+
+    return this.formatEntry(diffHours, diffMinutes);
+  }
+
+  public formatEntry(hours: number, minutes: number): string {
+    let result = hours < 10 ? "0" + hours + ":" : hours.toString() + ":";
+    result += minutes < 10 ? "0" + minutes : minutes.toString();
+    return result;
   }
 
   public addEntry(): void {
@@ -97,18 +111,19 @@ export class TimePage {
     this.updateCurrentAction();
   }
 
-  public removeEntry(index: number): void {
+  public removeEntry(entry: TimeEntry, index: number): void {
     this.shouldAnimate.splice(index, 1);
-    this.data.splice(index, 1);
+    this.data.splice(this.data.indexOf(entry), 1);
     this.saveData();
     this.updateCurrentAction();
   }
 
   private updateCurrentAction(): void {
-    if (this.data.length == 0) {
+    const today = this.getEntriesOfToday();
+    if (today.length == 0) {
       this.currentAction = 'login';
     }else {
-      this.currentAction = this.data[this.data.length - 1].type === 'login' ? 'logout' : 'login';
+      this.currentAction = today[today.length - 1].type === 'login' ? 'logout' : 'login';
     }
   }
 
@@ -121,7 +136,7 @@ export class TimePage {
   }
 
   public addModalEntry(): void {
-    const date = new Date(this.modalDate);
+    const date = new Date(this.modalDate || Date.now());
     date.setSeconds(0);
 
     this.data.push({

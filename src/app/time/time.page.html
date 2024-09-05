@@ -25,10 +25,10 @@
   </ion-item>
 
   <section class="time-entries">
-    <ion-item class="entry" *ngFor="let entry of getEntriesOfToday(); let index = index" (click)="removeEntry(index)" [ngClass]="{'animate': shouldAnimate[index]}">
+    <ion-item class="entry" *ngFor="let entry of getEntriesOfToday(); let index = index" (click)="removeEntry(entry, index)" [ngClass]="{'animate': shouldAnimate[index]}">
       <div class="circle"></div>
       <ion-label class="type">{{getTypeText(entry.type)}}</ion-label>
-      <span class="time">{{entry.registeredAt.toLocaleTimeString()}}</span>
+      <span class="time">{{formatEntry(entry.registeredAt.getHours(), entry.registeredAt.getMinutes())}}</span>
       <span *ngIf="index !== 0" class="between">
         <span class="between-content">{{generateSeparatorText(data[index - 1], entry)}}</span>
       </span>
