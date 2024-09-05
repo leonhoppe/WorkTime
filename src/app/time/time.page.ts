@@ -75,7 +75,7 @@ export class TimePage {
   public generateSeparatorText(entry1: TimeEntry, entry2: TimeEntry): string {
     let text = entry1.type === 'login' ? "Arbeit " : "Pause ";
     if (entry1.type === 'start-drive' && entry2.type === 'end-drive') {
-      text = "Dienstreise";
+      text = "Dienstreise ";
     }
 
     return text + `(${this.calculateTimespan(entry1.registeredAt, entry2.registeredAt)})`;
@@ -123,7 +123,43 @@ export class TimePage {
     if (today.length == 0) {
       this.currentAction = 'login';
     }else {
-      this.currentAction = today[today.length - 1].type === 'login' ? 'logout' : 'login';
+      const lastAction = today[today.length - 1].type;
+
+      switch (lastAction) {
+        case "start-drive":
+          this.currentAction = 'end-drive';
+          break;
+
+        case "end-drive":
+          this.currentAction = 'login';
+          break;
+
+        case "login":
+          this.currentAction = 'logout';
+          break;
+
+        case "logout":
+        default:
+          this.currentAction = 'login';
+          break;
+      }
+    }
+  }
+
+  public translateCurrentAction(): string {
+    switch (this.currentAction) {
+      case "start-drive":
+        return "Dienstreise starten";
+
+      case "end-drive":
+        return "Dienstreise beenden";
+
+      case "login":
+        return "Einstempeln";
+
+      case "logout":
+      default:
+        return "Ausstempeln";
     }
   }
 

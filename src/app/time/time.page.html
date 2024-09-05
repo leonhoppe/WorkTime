@@ -36,7 +36,7 @@
   </section>
 
   <div class="button-container" *ngIf="isToday()">
-    <ion-button (click)="addEntry()">{{currentAction === 'login' ? "Einstempeln" : "Ausstempeln"}}</ion-button>
+    <ion-button (click)="addEntry()">{{translateCurrentAction()}}</ion-button>
     <ion-button shape="round" class="icon-button" (click)="openModal()">
       <ion-icon slot="icon-only" name="add"></ion-icon>
     </ion-button>
