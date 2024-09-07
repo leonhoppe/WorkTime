@@ -30,7 +30,7 @@
       <ion-label class="type">{{getTypeText(entry.type)}}</ion-label>
       <span class="time">{{formatEntry(entry.registeredAt.getHours(), entry.registeredAt.getMinutes())}}</span>
       <span *ngIf="index !== 0" class="between">
-        <span class="between-content">{{generateSeparatorText(data[index - 1], entry)}}</span>
+        <span class="between-content">{{generateSeparatorText(today[index - 1], entry)}}</span>
       </span>
     </ion-item>
   </section>

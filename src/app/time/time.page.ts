@@ -25,6 +25,7 @@ import {FormsModule} from "@angular/forms";
 })
 export class TimePage {
   public data: TimeEntry[] = [];
+  public today: TimeEntry[] = [];
   public shouldAnimate: boolean[] = [];
   public currentAction: TimeType = 'login';
   @ViewChild('createModal') modal: IonModal | undefined;
@@ -53,7 +54,8 @@ export class TimePage {
 
   public getEntriesOfToday(): TimeEntry[] {
     const today = new Date(this.currentDate || Date.now()).toLocaleDateString();
-    return this.data.filter(entry => entry.registeredAt.toLocaleDateString() === today);
+    this.today = this.data.filter(entry => entry.registeredAt.toLocaleDateString() === today);
+    return this.today;
   }
 
   public getTypeText(type: TimeType): string {
@@ -119,11 +121,10 @@ export class TimePage {
   }
 
   private updateCurrentAction(): void {
-    const today = this.getEntriesOfToday();
-    if (today.length == 0) {
+    if (this.data.length == 0) {
       this.currentAction = 'login';
     }else {
-      const lastAction = today[today.length - 1].type;
+      const lastAction = this.data[this.data.length - 1].type;
 
       switch (lastAction) {
         case "start-drive":
@@ -188,8 +189,8 @@ export class TimePage {
       this.shouldAnimate.push(false);
     }
 
-    this.updateCurrentAction();
     this.saveData();
+    this.updateCurrentAction();
     this.modal?.dismiss(null, 'submit');
     this.modalDate = undefined;
   }
