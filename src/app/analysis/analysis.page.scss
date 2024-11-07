@@ -1,0 +1,19 @@
+.work-progress {
+  &::part(stream) {
+    animation: none;
+    -webkit-animation: none;
+    background-image: radial-gradient(ellipse at center, var(--background) 0%, var(--background) 30%, var(--background) 30%);
+  }
+
+  &::part(track) {
+    background-color: var(--ion-color-warning);
+  }
+}
+
+#overtime::part(track) {
+  background-color: var(--ion-color-tertiary-shade);
+}
+
+ion-card-content ion-item {
+  --background: unset;
+}

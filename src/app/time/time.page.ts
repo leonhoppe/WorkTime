@@ -15,6 +15,7 @@ import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {addIcons} from "ionicons";
 import {add} from "ionicons/icons";
 import {FormsModule} from "@angular/forms";
+import {TimeService} from "../../services/time.service";
 
 @Component({
   selector: 'app-tab1',
@@ -33,21 +34,14 @@ export class TimePage {
   public modalDate: any;
   public currentDate: any;
 
-  constructor() {
-    const savedData = localStorage.getItem("time-data");
+  constructor(private timeService: TimeService) {
+    this.data = timeService.loadEntries();
 
-    if (savedData != null) {
-      this.data = JSON.parse(savedData as string);
-
-      for (let entry of this.data) {
-        entry.registeredAt = new Date(entry.registeredAt);
-        entry.registeredAt.toLocaleTimeString();
-
-        this.shouldAnimate.push(false);
-      }
-
-      this.updateCurrentAction();
+    for (let i = 0; i < this.data.length; i++) {
+      this.shouldAnimate.push(false);
     }
+
+    this.updateCurrentAction();
 
     addIcons({add});
   }
@@ -80,18 +74,15 @@ export class TimePage {
       text = "Dienstreise ";
     }
 
-    return text + `(${this.calculateTimespan(entry1.registeredAt, entry2.registeredAt)})`;
+    return text + `(${this.calculateTimespan(entry1, entry2)})`;
   }
 
-  private calculateTimespan(start: Date, end: Date): string {
-    const startSeconds: number = (start.getHours() * 3600) + (start.getMinutes() * 60) + start.getSeconds();
-    const endSeconds: number = (end.getHours() * 3600) + (end.getMinutes() * 60) + end.getSeconds();
+  private calculateTimespan(start: TimeEntry, end: TimeEntry): string {
+    const time = this.timeService.calculateTimespanInMinutes(start, end);
+    const hours = Math.floor(time / 60);
+    const minutes = time % 60;
 
-    const difference = endSeconds - startSeconds;
-    const diffHours = Math.floor(difference / 3600.00);
-    const diffMinutes = Math.floor((difference % 3600) / 60.00);
-
-    return this.formatEntry(diffHours, diffMinutes);
+    return this.formatEntry(hours, minutes);
   }
 
   public formatEntry(hours: number, minutes: number): string {
@@ -165,7 +156,7 @@ export class TimePage {
   }
 
   private saveData(): void {
-    localStorage.setItem("time-data", JSON.stringify(this.data));
+    this.timeService.saveEntries(this.data);
   }
 
   public openModal(): void {
