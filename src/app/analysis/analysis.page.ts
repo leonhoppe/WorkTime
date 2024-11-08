@@ -49,26 +49,12 @@ export class AnalysisPage {
   @ViewChild('chart') chartRef: ElementRef;
   private chart: any;
 
-  private changeListener: any;
-
   constructor(private time: TimeService) {
     addIcons({briefcase, pizza, card})
   }
 
   ionViewDidEnter() {
     this.updateCurrentData();
-
-    let lastDate: any = undefined;
-    this.changeListener = setInterval(() => {
-      if (this.currentDate != lastDate) {
-        lastDate = this.currentDate;
-        this.updateCurrentData();
-      }
-    }, 200)
-  }
-
-  ionViewDidLeave() {
-    clearInterval(this.changeListener);
   }
 
   public updateCurrentData() {

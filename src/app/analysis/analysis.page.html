@@ -15,11 +15,11 @@
 
   <ion-item>
     <ion-label>Tag</ion-label>
-    <ion-datetime-button datetime="current-datetime"></ion-datetime-button>
+    <ion-datetime-button datetime="current-datetime-analysis"></ion-datetime-button>
 
     <ion-modal [keepContentsMounted]="true">
       <ng-template>
-        <ion-datetime id="current-datetime" presentation="date" [(ngModel)]="currentDate"></ion-datetime>
+        <ion-datetime id="current-datetime-analysis" presentation="date" [(ngModel)]="currentDate" (ngModelChange)="updateCurrentData()"></ion-datetime>
       </ng-template>
     </ion-modal>
   </ion-item>
