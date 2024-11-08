@@ -6,3 +6,7 @@ ion-item-divider {
 ion-item {
   --border-style: none;
 }
+
+ion-label {
+  min-width: 60px;
+}

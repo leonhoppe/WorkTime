@@ -24,6 +24,7 @@ import {briefcase, card, pizza} from "ionicons/icons";
 import {NgIf} from "@angular/common";
 import {SettingsService} from "../../services/settings.service";
 import {Settings} from "../../models/settings";
+import {AppComponent} from "../app.component";
 
 @Component({
   selector: 'app-tab2',
@@ -54,6 +55,12 @@ export class AnalysisPage {
   }
 
   ionViewDidEnter() {
+    this.currentDate = AppComponent.currentDate;
+    this.updateCurrentData();
+  }
+
+  public updateCurrentDate() {
+    AppComponent.currentDate = this.currentDate;
     this.updateCurrentData();
   }
 
@@ -65,26 +72,50 @@ export class AnalysisPage {
     this.driveTime = 0;
     this.combinedWorkTime = 0;
 
-    if (this.timeData.length < 2) {
+    if (this.timeData.length == 0) {
       this.showEmptyChart();
       return;
     }
 
-    for (let i = 1; i < this.timeData.length; i++) {
-      const start = this.timeData[i - 1];
-      const end = this.timeData[i];
-      const diff = this.time.calculateTimespanInMinutes(start, end);
+    if (this.timeData.length >= 1 && this.time.isToday(this.currentDate)) {
+      const lastEntry = this.timeData[this.timeData.length - 1];
+      const diff = this.time.calculateTimespanInMinutes(lastEntry, {
+        type: undefined,
+        registeredAt: new Date(Date.now())
+      });
 
-      if (start.type == 'start-drive' && end.type == 'end-drive') {
-        this.driveTime += diff;
-      }
-      else if (start.type === 'login') {
+      if (lastEntry.type == "login") {
         this.workTime += diff;
       }
-      else {
-        this.pauseTime += diff;
+      else if (lastEntry.type == "start-drive") {
+        this.driveTime += diff;
+      }
+
+      if (lastEntry.registeredAt.getHours() < this.settings.dontTrackPauseAfter) {
+        if (lastEntry.type == "logout" || lastEntry.type == "end-drive") {
+          this.pauseTime += diff;
+        }
       }
     }
+
+    if (this.timeData.length > 2) {
+      for (let i = 1; i < this.timeData.length; i++) {
+        const start = this.timeData[i - 1];
+        const end = this.timeData[i];
+        const diff = this.time.calculateTimespanInMinutes(start, end);
+
+        if (start.type == 'start-drive' && end.type == 'end-drive') {
+          this.driveTime += diff;
+        }
+        else if (start.type === 'login') {
+          this.workTime += diff;
+        }
+        else {
+          this.pauseTime += diff;
+        }
+      }
+    }
+
     this.combinedWorkTime = this.workTime + this.driveTime;
 
     if (this.combinedWorkTime < 360) {

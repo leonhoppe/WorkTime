@@ -8,5 +8,6 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
+  public static currentDate: any;
   constructor() {}
 }

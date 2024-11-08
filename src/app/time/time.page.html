@@ -19,7 +19,7 @@
 
     <ion-modal [keepContentsMounted]="true">
       <ng-template>
-        <ion-datetime id="current-datetime" presentation="date" [(ngModel)]="currentDate"></ion-datetime>
+        <ion-datetime id="current-datetime" presentation="date" [(ngModel)]="currentDate" (ngModelChange)="updateCurrentDate()"></ion-datetime>
       </ng-template>
     </ion-modal>
   </ion-item>

@@ -15,6 +15,7 @@ import {addIcons} from "ionicons";
 import {add} from "ionicons/icons";
 import {FormsModule} from "@angular/forms";
 import {TimeService} from "../../services/time.service";
+import {AppComponent} from "../app.component";
 
 @Component({
   selector: 'app-tab1',
@@ -43,6 +44,14 @@ export class TimePage {
     this.updateCurrentAction();
 
     addIcons({add});
+  }
+
+  ionViewDidEnter() {
+    this.currentDate = AppComponent.currentDate;
+  }
+
+  public updateCurrentDate() {
+    AppComponent.currentDate = this.currentDate;
   }
 
   public getEntriesOfToday(): TimeEntry[] {
@@ -186,7 +195,7 @@ export class TimePage {
   }
 
   public isToday(): boolean {
-    return new Date(this.currentDate || Date.now()).toLocaleDateString() === new Date(Date.now()).toLocaleDateString();
+    return this.timeService.isToday(this.currentDate);
   }
 
   protected readonly open = open;

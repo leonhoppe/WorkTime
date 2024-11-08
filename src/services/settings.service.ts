@@ -27,6 +27,7 @@ export class SettingsService {
       defaultPauseTime: 0,
       pauseAfter6: 30,
       pauseAfter9: 45,
+      dontTrackPauseAfter: 14,
       maxOverTime: 60,
       desiredOverTime: 30
     };

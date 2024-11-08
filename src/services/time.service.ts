@@ -43,4 +43,8 @@ export class TimeService {
   public saveEntries(entries: TimeEntry[]): void {
     localStorage.setItem("time-data", JSON.stringify(entries));
   }
+
+  public isToday(currentDate: any): boolean {
+    return new Date(currentDate || Date.now()).toLocaleDateString() === new Date(Date.now()).toLocaleDateString();
+  }
 }

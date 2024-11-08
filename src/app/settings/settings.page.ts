@@ -43,6 +43,7 @@ export class SettingsPage {
     this.input.pauseAfter9 ??= this.settings.pauseAfter9;
     this.input.maxOverTime ??= this.settings.maxOverTime;
     this.input.desiredOverTime ??= this.settings.desiredOverTime;
+    this.input.dontTrackPauseAfter ??= this.settings.dontTrackPauseAfter;
 
     this.settingsProvider.saveSettings(this.input);
 
