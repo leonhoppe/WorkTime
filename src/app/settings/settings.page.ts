@@ -7,20 +7,30 @@ import {
   IonList,
   IonItem,
   IonInput,
-  IonToggle, IonButton, IonLabel, IonItemDivider, IonCol, ToastController
+  IonToggle,
+  IonButton,
+  IonLabel,
+  IonItemDivider,
+  IonCol,
+  ToastController,
+  IonIcon,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent
 } from '@ionic/angular/standalone';
 import {Settings} from "../../models/settings";
 import {SettingsService} from "../../services/settings.service";
 import {FormsModule} from "@angular/forms";
 import {addIcons} from "ionicons";
-import { save } from 'ionicons/icons';
+import {briefcase, card, pizza, save} from 'ionicons/icons';
 
 @Component({
   selector: 'app-tab3',
   templateUrl: 'settings.page.html',
   styleUrls: ['settings.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonInput, FormsModule, IonToggle, IonButton, IonLabel, IonItemDivider, IonCol],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonInput, FormsModule, IonToggle, IonButton, IonLabel, IonItemDivider, IonCol, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent],
 })
 export class SettingsPage {
   public settings: Settings;
@@ -30,7 +40,7 @@ export class SettingsPage {
     this.settings = settingsProvider.loadSettings();
     this.input.notifications = this.settings.notifications;
 
-    addIcons({save});
+    addIcons({save, briefcase, pizza, card});
   }
 
   public async save() {

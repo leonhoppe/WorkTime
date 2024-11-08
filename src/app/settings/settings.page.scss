@@ -1,3 +1,9 @@
+ion-card-content {
+  ion-item, ion-item-divider {
+    --background: unset;
+  }
+}
+
 ion-item-divider {
   --background: transparent;
   border-bottom: none;
@@ -9,4 +15,14 @@ ion-item {
 
 ion-label {
   min-width: 60px;
+}
+
+ion-icon {
+  height: 100%;
+  font-size: 1.7rem;
+  transform: translateY(-0.15rem);
+  margin-right: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

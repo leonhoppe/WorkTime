@@ -21,7 +21,7 @@ import {TimeService} from "../../services/time.service";
 import {Chart} from "chart.js/auto";
 import {addIcons} from "ionicons";
 import {briefcase, card, pizza} from "ionicons/icons";
-import {NgIf} from "@angular/common";
+import {NgClass, NgIf} from "@angular/common";
 import {SettingsService} from "../../services/settings.service";
 import {Settings} from "../../models/settings";
 import {AppComponent} from "../app.component";
@@ -31,7 +31,7 @@ import {AppComponent} from "../app.component";
   templateUrl: 'analysis.page.html',
   styleUrls: ['analysis.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonDatetimeButton, IonModal, IonDatetime, FormsModule, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonList, IonIcon, IonProgressBar, NgIf]
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonDatetimeButton, IonModal, IonDatetime, FormsModule, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonList, IonIcon, IonProgressBar, NgIf, NgClass]
 })
 export class AnalysisPage {
   public currentDate: any;
@@ -51,7 +51,7 @@ export class AnalysisPage {
 
   constructor(private time: TimeService, private settingsProvider: SettingsService) {
     this.settings = this.settingsProvider.loadSettings();
-    addIcons({briefcase, pizza, card})
+    addIcons({briefcase, pizza, card});
   }
 
   ionViewDidEnter() {
@@ -71,11 +71,6 @@ export class AnalysisPage {
     this.pauseTime = 0;
     this.driveTime = 0;
     this.combinedWorkTime = 0;
-
-    if (this.timeData.length == 0) {
-      this.showEmptyChart();
-      return;
-    }
 
     if (this.timeData.length >= 1 && this.time.isToday(this.currentDate)) {
       const lastEntry = this.timeData[this.timeData.length - 1];
@@ -98,7 +93,7 @@ export class AnalysisPage {
       }
     }
 
-    if (this.timeData.length > 2) {
+    if (this.timeData.length >= 2) {
       for (let i = 1; i < this.timeData.length; i++) {
         const start = this.timeData[i - 1];
         const end = this.timeData[i];
@@ -135,22 +130,34 @@ export class AnalysisPage {
     const style = getComputedStyle(document.body);
     const textColor = style.getPropertyValue('--ion-text-color');
     const workColor = style.getPropertyValue('--ion-color-primary');
-    const driveColor = style.getPropertyValue('--ion-color-secondary');
     const remainColor = style.getPropertyValue('--ion-card-background');
     const overColor = style.getPropertyValue('--ion-color-tertiary');
     const overColorWarn = style.getPropertyValue('--ion-color-warning');
+    const overColorDanger = style.getPropertyValue('--ion-color-danger');
 
-    let overData: number[] = [];
-    let overLabels: string[] = [];
-    let overColors: string[] = [];
+    let chartData: number[] = [];
+    let chartLabels: string[] = [];
+    let chartColors: string[] = [];
 
-    if (this.combinedWorkTime > this.settings.maxWorkTime) {
+    if (this.combinedWorkTime > (this.settings.maxWorkTime + this.settings.maxOverTime)) {
+      chartData.push(1);
+      chartColors.push(overColorDanger);
+    }
+    else if (this.combinedWorkTime > this.settings.maxWorkTime) {
       const overTime = this.combinedWorkTime - this.settings.maxWorkTime;
-      const overPercentage = overTime / this.settings.desiredOverTime;
+      const overPercentage = (overTime / this.settings.desiredOverTime) * 0.5;
 
-      overData.push(this.combinedWorkTime * overPercentage);
-      overLabels.push('Überstunden');
-      overColors.push(overPercentage > 1 ? overColorWarn : overColor);
+      chartData.push(overPercentage, 1 - overPercentage);
+      chartLabels.push('Überstunden', 'Arbeitszeit');
+      chartColors.push(overPercentage > 0.5 ? overColorWarn : overColor, workColor);
+    }
+    else if (this.combinedWorkTime == 0) {
+      chartData.push(1);
+      chartColors.push(remainColor);
+    }
+    else {
+      chartData.push(this.workTime, Math.max(this.settings.maxWorkTime - this.combinedWorkTime, 0));
+      chartColors.push(workColor, remainColor);
     }
 
     this.chart?.destroy();
@@ -158,55 +165,17 @@ export class AnalysisPage {
     this.chart = new Chart(this.chartRef.nativeElement, {
       type: 'doughnut',
       data: {
-        labels: [
-          ...overLabels,
-          'Arbeitszeit',
-          'Dienstreise'
-        ],
+        labels: chartLabels,
         datasets: [{
-          label: 'Zeit',
-          data: [...overData, this.workTime, this.driveTime, Math.max(this.settings.maxWorkTime - this.combinedWorkTime, 0)],
-          backgroundColor: [
-            ...overColors,
-            workColor,
-            driveColor,
-            remainColor
-          ],
+          data: chartData,
+          backgroundColor: chartColors
         }]
       },
       options: {
         events: [],
         plugins: {
           legend: {
-            display: this.driveTime > 0 || this.combinedWorkTime > this.settings.maxWorkTime
-          }
-        }
-      }
-    });
-  }
-
-  public showEmptyChart() {
-    const style = getComputedStyle(document.body);
-    const remainColor = style.getPropertyValue('--ion-card-background');
-
-    this.chart?.destroy();
-    this.chart = new Chart(this.chartRef.nativeElement, {
-      type: 'doughnut',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Zeit',
-          data: [100],
-          backgroundColor: [
-            remainColor
-          ],
-        }]
-      },
-      options: {
-        events: [],
-        plugins: {
-          legend: {
-            display: this.driveTime > 0 || this.combinedWorkTime > this.settings.maxWorkTime
+            display: false
           }
         }
       }
