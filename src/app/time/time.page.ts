@@ -9,7 +9,6 @@ import {
   IonItem,
   IonLabel, IonIcon, IonModal, IonButtons, IonInput, IonDatetime, IonDatetimeButton, IonSelect, IonSelectOption
 } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import {TimeEntry, TimeType} from "../../models/timeEntry";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {addIcons} from "ionicons";
@@ -22,7 +21,7 @@ import {TimeService} from "../../services/time.service";
   templateUrl: 'time.page.html',
   styleUrls: ['time.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent, NgForOf, IonButton, IonList, IonItem, IonLabel, NgIf, NgClass, IonIcon, IonModal, IonButtons, IonInput, IonDatetime, IonDatetimeButton, IonSelect, IonSelectOption, FormsModule],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, NgForOf, IonButton, IonList, IonItem, IonLabel, NgIf, NgClass, IonIcon, IonModal, IonButtons, IonInput, IonDatetime, IonDatetimeButton, IonSelect, IonSelectOption, FormsModule],
 })
 export class TimePage {
   public data: TimeEntry[] = [];

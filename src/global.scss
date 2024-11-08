@@ -39,3 +39,9 @@
 .ios .icon-button {
   width: 50px;
 }
+
+.toast {
+  --background: var(--ion-item-background);
+  --color: var(--ion-text-color);
+  --ion-safe-area-bottom: 60px;
+}

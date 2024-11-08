@@ -27,7 +27,7 @@
   <ion-card>
     <ion-card-header>
       <ion-card-title>Noch zu arbeiten</ion-card-title>
-      <ion-card-subtitle *ngIf="combinedWorkTime > (maxWorkTime + desOverTime)">Tagessoll erreicht!</ion-card-subtitle>
+      <ion-card-subtitle *ngIf="combinedWorkTime > (settings.maxWorkTime + settings.desiredOverTime)">Tagessoll erreicht!</ion-card-subtitle>
     </ion-card-header>
 
     <ion-card-content>
@@ -45,8 +45,8 @@
         <ion-item>
           <ion-icon aria-hidden="true" name="briefcase" slot="start"></ion-icon>
           <ion-label>
-            {{formatTime(workTime)}} von {{formatTime(maxWorkTime)}} <span *ngIf="driveTime > 0">(+{{formatTime(driveTime)}} Reisezeit)</span>
-            <ion-progress-bar class="work-progress" [value]="workTime / maxWorkTime" [buffer]="(workTime + driveTime) / maxWorkTime" />
+            {{formatTime(workTime)}} von {{formatTime(settings.maxWorkTime)}} <span *ngIf="driveTime > 0">(+{{formatTime(driveTime)}} Reisezeit)</span>
+            <ion-progress-bar class="work-progress" [value]="workTime / settings.maxWorkTime" [buffer]="(workTime + driveTime) / settings.maxWorkTime" />
           </ion-label>
         </ion-item>
         <ion-item>
@@ -60,9 +60,14 @@
         <ion-item>
           <ion-icon aria-hidden="true" name="card" slot="start"></ion-icon>
           <ion-label>
-            {{formatTime(Math.max(combinedWorkTime - maxWorkTime, 0))}} von {{formatTime(desOverTime)}} ({{formatTime(maxOverTime)}} maximal)
-            <ion-progress-bar *ngIf="combinedWorkTime - maxWorkTime <= maxOverTime" class="work-progress" id="overtime" [value]="(combinedWorkTime - maxWorkTime) / maxOverTime" [buffer]="desOverTime / maxOverTime" />
-            <ion-progress-bar *ngIf="combinedWorkTime - maxWorkTime > maxOverTime" value="1" color="danger" />
+            {{formatTime(Math.max(combinedWorkTime - settings.maxWorkTime, 0))}} von {{formatTime(settings.desiredOverTime)}} ({{formatTime(settings.maxOverTime)}} maximal)
+            <ion-progress-bar
+              *ngIf="combinedWorkTime - settings.maxWorkTime <= settings.maxOverTime"
+              class="work-progress" id="overtime"
+              [value]="(combinedWorkTime - settings.maxWorkTime) / settings.maxOverTime"
+              [buffer]="settings.desiredOverTime / settings.maxOverTime"
+            />
+            <ion-progress-bar *ngIf="combinedWorkTime - settings.maxWorkTime > settings.maxOverTime" value="1" color="danger" />
           </ion-label>
         </ion-item>
       </ion-list>

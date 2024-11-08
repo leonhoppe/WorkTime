@@ -15,7 +15,6 @@ import {
   IonCardContent,
   IonCardSubtitle, IonList, IonIcon, IonProgressBar
 } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import {FormsModule} from "@angular/forms";
 import {TimeEntry} from "../../models/timeEntry";
 import {TimeService} from "../../services/time.service";
@@ -23,13 +22,15 @@ import {Chart} from "chart.js/auto";
 import {addIcons} from "ionicons";
 import {briefcase, card, pizza} from "ionicons/icons";
 import {NgIf} from "@angular/common";
+import {SettingsService} from "../../services/settings.service";
+import {Settings} from "../../models/settings";
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'analysis.page.html',
   styleUrls: ['analysis.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent, IonItem, IonLabel, IonDatetimeButton, IonModal, IonDatetime, FormsModule, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonList, IonIcon, IonProgressBar, NgIf]
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonDatetimeButton, IonModal, IonDatetime, FormsModule, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle, IonList, IonIcon, IonProgressBar, NgIf]
 })
 export class AnalysisPage {
   public currentDate: any;
@@ -39,17 +40,16 @@ export class AnalysisPage {
   public pauseTime: number = 0;
   public driveTime: number = 0;
   public combinedWorkTime: number = 0;
+  public maxPauseTime: number = 0;
 
-  public maxWorkTime: number = 420;
-  public maxPauseTime: number = 30;
-  public maxOverTime: number = 60;
-  public desOverTime: number = 30;
+  public settings: Settings;
 
   // @ts-ignore
   @ViewChild('chart') chartRef: ElementRef;
   private chart: any;
 
-  constructor(private time: TimeService) {
+  constructor(private time: TimeService, private settingsProvider: SettingsService) {
+    this.settings = this.settingsProvider.loadSettings();
     addIcons({briefcase, pizza, card})
   }
 
@@ -58,6 +58,7 @@ export class AnalysisPage {
   }
 
   public updateCurrentData() {
+    this.settings = this.settingsProvider.loadSettings();
     this.timeData = this.time.getEntries(this.currentDate);
     this.workTime = 0;
     this.pauseTime = 0;
@@ -87,13 +88,13 @@ export class AnalysisPage {
     this.combinedWorkTime = this.workTime + this.driveTime;
 
     if (this.combinedWorkTime < 360) {
-      this.maxPauseTime = 0;
+      this.maxPauseTime = this.settings.defaultPauseTime;
     }
     if (this.combinedWorkTime >= 360) { // 6h
-      this.maxPauseTime = 30;
+      this.maxPauseTime = this.settings.pauseAfter6;
     }
     if (this.combinedWorkTime >= 540) { // 9h
-      this.maxPauseTime = 45;
+      this.maxPauseTime = this.settings.pauseAfter9;
     }
 
     this.updateChart();
@@ -112,9 +113,9 @@ export class AnalysisPage {
     let overLabels: string[] = [];
     let overColors: string[] = [];
 
-    if (this.combinedWorkTime > this.maxWorkTime) {
-      const overTime = this.combinedWorkTime - this.maxWorkTime;
-      const overPercentage = overTime / this.desOverTime;
+    if (this.combinedWorkTime > this.settings.maxWorkTime) {
+      const overTime = this.combinedWorkTime - this.settings.maxWorkTime;
+      const overPercentage = overTime / this.settings.desiredOverTime;
 
       overData.push(this.combinedWorkTime * overPercentage);
       overLabels.push('Überstunden');
@@ -133,7 +134,7 @@ export class AnalysisPage {
         ],
         datasets: [{
           label: 'Zeit',
-          data: [...overData, this.workTime, this.driveTime, Math.max(this.maxWorkTime - this.combinedWorkTime, 0)],
+          data: [...overData, this.workTime, this.driveTime, Math.max(this.settings.maxWorkTime - this.combinedWorkTime, 0)],
           backgroundColor: [
             ...overColors,
             workColor,
@@ -146,7 +147,7 @@ export class AnalysisPage {
         events: [],
         plugins: {
           legend: {
-            display: this.driveTime > 0 || this.combinedWorkTime > this.maxWorkTime
+            display: this.driveTime > 0 || this.combinedWorkTime > this.settings.maxWorkTime
           }
         }
       }
@@ -174,7 +175,7 @@ export class AnalysisPage {
         events: [],
         plugins: {
           legend: {
-            display: this.driveTime > 0 || this.combinedWorkTime > this.maxWorkTime
+            display: this.driveTime > 0 || this.combinedWorkTime > this.settings.maxWorkTime
           }
         }
       }
