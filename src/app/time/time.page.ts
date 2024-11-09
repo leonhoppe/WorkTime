@@ -7,12 +7,21 @@ import {
   IonButton,
   IonList,
   IonItem,
-  IonLabel, IonIcon, IonModal, IonButtons, IonInput, IonDatetime, IonDatetimeButton, IonSelect, IonSelectOption
+  IonLabel,
+  IonIcon,
+  IonModal,
+  IonButtons,
+  IonInput,
+  IonDatetime,
+  IonDatetimeButton,
+  IonSelect,
+  IonSelectOption,
+  AlertController
 } from '@ionic/angular/standalone';
 import {TimeEntry, TimeType} from "../../models/timeEntry";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {addIcons} from "ionicons";
-import {add} from "ionicons/icons";
+import {add, trash} from "ionicons/icons";
 import {FormsModule} from "@angular/forms";
 import {TimeService} from "../../services/time.service";
 import {AppComponent} from "../app.component";
@@ -34,7 +43,7 @@ export class TimePage {
   public modalDate: any;
   public currentDate: any;
 
-  constructor(private timeService: TimeService) {
+  constructor(private timeService: TimeService, private alerts: AlertController) {
     this.data = timeService.loadEntries();
 
     for (let i = 0; i < this.data.length; i++) {
@@ -43,7 +52,7 @@ export class TimePage {
 
     this.updateCurrentAction();
 
-    addIcons({add});
+    addIcons({add, trash});
   }
 
   ionViewDidEnter() {
@@ -112,11 +121,32 @@ export class TimePage {
     this.updateCurrentAction();
   }
 
-  public removeEntry(entry: TimeEntry, index: number): void {
-    this.shouldAnimate.splice(index, 1);
-    this.data.splice(this.data.indexOf(entry), 1);
-    this.saveData();
-    this.updateCurrentAction();
+  public async removeEntry(entry: TimeEntry, index: number) {
+    if (!this.isToday()) return;
+
+    const alert = await this.alerts.create({
+      header: "Achtung!",
+      message: 'Möchtest du diesen Eintrag wirklich löschen?',
+      buttons: [
+        {
+          text: "Abbrechen",
+          role: "cancel"
+        },
+        {
+          text: "Löschen",
+          role: "destructive"
+        }
+      ]
+    });
+    await alert.present();
+    const result = await alert.onDidDismiss();
+
+    if (result.role == "destructive") {
+      this.shouldAnimate.splice(index, 1);
+      this.data.splice(this.data.indexOf(entry), 1);
+      this.saveData();
+      this.updateCurrentAction();
+    }
   }
 
   private updateCurrentAction(): void {

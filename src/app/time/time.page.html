@@ -29,6 +29,7 @@
       <div class="circle"></div>
       <ion-label class="type">{{getTypeText(entry.type)}}</ion-label>
       <span class="time">{{formatEntry(entry.registeredAt.getHours(), entry.registeredAt.getMinutes())}}</span>
+      <ion-icon name="trash" *ngIf="isToday()" />
       <span *ngIf="index !== 0" class="between">
         <span class="between-content">{{generateSeparatorText(today[index - 1], entry)}}</span>
       </span>
