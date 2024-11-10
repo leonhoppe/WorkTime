@@ -28,8 +28,7 @@ export class AppComponent {
           role: "cancel"
         },
         {
-          text: "Ja",
-          role: "destructive"
+          text: "Ja"
         }
       ]
     });
@@ -37,7 +36,7 @@ export class AppComponent {
     await alert.present();
     const result = await alert.onDidDismiss();
 
-    if (result.role == "destructive") {
+    if (result.role != "cancel") {
       await this.updates.activateUpdate();
       document.location.reload();
     }

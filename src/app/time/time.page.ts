@@ -117,6 +117,9 @@ export class TimePage {
       registeredAt: new Date(Date.now()),
       type: this.currentAction
     });
+    this.data.sort((a: TimeEntry, b: TimeEntry) => {
+      return a.registeredAt.getTime() - b.registeredAt.getTime();
+    });
     this.saveData();
     this.updateCurrentAction();
   }
@@ -201,13 +204,18 @@ export class TimePage {
     this.modal?.present();
   }
 
-  public addModalEntry(): void {
+  public addModalEntry(hours?: number, minutes?: number, action?: TimeType): void {
     const date = new Date(this.modalDate || Date.now());
     date.setSeconds(0);
 
+    if (hours != undefined && minutes != undefined) {
+      date.setHours(hours);
+      date.setMinutes(minutes);
+    }
+
     this.data.push({
       registeredAt: date,
-      type: this.currentAction
+      type: action || this.currentAction
     });
     this.data.sort((a: TimeEntry, b: TimeEntry) => {
       return a.registeredAt.getTime() - b.registeredAt.getTime();
@@ -224,9 +232,12 @@ export class TimePage {
     this.modalDate = undefined;
   }
 
+  public addDefaultBreak() {
+    this.addModalEntry(12, 0, 'logout');
+    this.addModalEntry(12, 30, 'login');
+  }
+
   public isToday(): boolean {
     return this.timeService.isToday(this.currentDate);
   }
-
-  protected readonly open = open;
 }
